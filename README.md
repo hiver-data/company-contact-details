@@ -12,6 +12,10 @@ anchorbrewing.com,Anchor Brewing | Find Craft Beer Near You | Tour Brewery.,ok,m
 
 These rows are real output from the Actor's test bench on 2026-10-09 (shortened).
 
+![Company websites in, a contact list out: real output rows with emails, phones, social profiles and postal address, each with its source page](media/contact-details/readme.gif)
+
+[Watch the 1-minute walkthrough (MP4, 1080p)](media/contact-details/walkthrough.mp4)
+
 ## Run it
 
 You need an Apify account (the free plan includes $5 of usage a month) and its API token from Apify Console > Settings > API & Integrations.

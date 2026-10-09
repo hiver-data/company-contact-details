@@ -1,0 +1,11 @@
+{
+  "name": "company-contacts-to-csv",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Emails, phones, social profiles and postal address for a list of company websites, one CSV row per company, via the hiver/company-contact-details Apify Actor",
+  "type": "module",
+  "engines": { "node": ">=18.3" },
+  "scripts": { "start": "node contacts-to-csv.mjs" },
+  "dependencies": { "apify-client": "^2.25.0" },
+  "license": "MIT"
+}

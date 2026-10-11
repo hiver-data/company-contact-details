@@ -1,6 +1,6 @@
-# Company websites to a contact list: emails, phones, socials and postal address
+# Company websites or Google Maps results to a contact list: emails, phones, socials and postal address
 
-Runnable Python and Node.js examples for [Company Contact Details Scraper: Emails, Phones, Address](https://apify.com/hiver/company-contact-details?utm_source=github&utm_campaign=company-contact-details), an Apify Actor built by hiver.
+Runnable Python and Node.js examples for [Contact Details Scraper & Google Maps Email Extractor](https://apify.com/hiver/company-contact-details?utm_source=github&utm_campaign=company-contact-details), an Apify Actor built by hiver.
 
 You give it a list of company websites (`plausible.io`, `https://www.example.com/en`). It reads each company's home page and the contact, about, imprint/legal and support pages linked from it (5 pages by default), and returns **one row per company**: role emails (info@, sales@, support@, press@), phone numbers, LinkedIn / X / Facebook / Instagram / YouTube / GitHub / TikTok profiles, the contact page and the postal address. Every value carries the page it was found on, so you can check it in one click.
 
@@ -15,6 +15,8 @@ These rows are real output from the Actor's test bench on 2026-10-09 (shortened)
 ![Company websites in, a contact list out: real output rows with emails, phones, social profiles and postal address, each with its source page](media/contact-details/readme.gif)
 
 [Watch the 1-minute walkthrough (MP4, 1080p)](media/contact-details/walkthrough.mp4)
+
+**New: Google Maps results in, emails out.** Point the Actor at a Google Maps Scraper dataset and get one row per place, with the place's own name, address and phone kept next to the contacts from its website. Places without a website are free. See [`google-maps/`](google-maps/) for a script that takes a dataset ID or runs the Maps search for you.
 
 ## Run it
 
@@ -52,7 +54,7 @@ Real example from the board's test run of build 0.2.9 (2026-10-11): for plausibl
 
 ## What it costs
 
-$2 per 1,000 companies on the free plan ($1.70 to $1.90 on paid Apify plans), plus Apify's $0.00005 start fee per run. You pay per company, not per page crawled, so you know the cost before you start. Websites that cannot be reached are listed with a reason and are not charged.
+$2 per 1,000 websites where at least one contact detail was found, on the free plan ($1.70 to $1.90 on paid Apify plans), with no start fee. You pay per website, not per page crawled, so you know the cost before you start. Websites that cannot be reached, sites with nothing found, places without a website and social-only websites are listed with a reason and are not charged.
 
 ## What we measured
 

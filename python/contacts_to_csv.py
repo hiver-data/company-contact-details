@@ -18,8 +18,19 @@ from apify_client import ApifyClient
 
 ACTOR = "hiver/company-contact-details"
 NETWORKS = ["linkedin", "x", "facebook", "instagram", "youtube", "github", "tiktok"]
-COLUMNS = (["domain", "companyName", "status", "emails", "emailTypes", "phones", "address", "addressSourceUrl",
-            "contactPageUrl"] + NETWORKS + ["website", "failureReason", "input"])
+COLUMNS = (["domain", "companyName", "status", "reviewFirst", "emails", "emailTypes", "emailFoundVia", "phones",
+            "phoneFoundVia", "address", "addressSourceUrl", "addressFoundVia", "contactPageUrl"]
+           + NETWORKS + ["website", "failureReason", "input"])
+
+# How each value was read (the Actor's foundVia):
+#   structured_data      the site's JSON-LD / schema.org data
+#   link                 a mailto: or tel: link
+#   address_tag          an HTML <address> element
+#   decoded_obfuscation  hidden from bots: Cloudflare email protection or "info [at] example [dot] com"
+#   page_text            plain text on the page
+# reviewFirst = "yes" when any value in the row was read in one of these ways. This is an example rule, not a
+# measured confidence score: edit the set to match how much checking your list needs.
+REVIEW_IF = {"page_text", "decoded_obfuscation"}
 
 
 def read_domains(args) -> list[str]:
@@ -44,7 +55,12 @@ def flatten(row: dict) -> dict:
                                      "contactPageUrl", "website", "failureReason", "input")}
     flat["emails"] = "; ".join(e["email"] for e in emails)
     flat["emailTypes"] = "; ".join(e.get("type") or "" for e in emails)
+    flat["emailFoundVia"] = "; ".join(e.get("foundVia") or "" for e in emails)
     flat["phones"] = "; ".join(p.get("e164") or p.get("number") or "" for p in phones)
+    flat["phoneFoundVia"] = "; ".join(p.get("foundVia") or "" for p in phones)
+    flat["addressFoundVia"] = row.get("addressFoundVia")
+    methods = [v.get("foundVia") for v in emails + phones] + [row.get("addressFoundVia")]
+    flat["reviewFirst"] = "yes" if REVIEW_IF.intersection(methods) else ""
     for net in NETWORKS:
         flat[net] = socials.get(net)
     return flat

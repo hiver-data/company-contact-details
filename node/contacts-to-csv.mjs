@@ -13,8 +13,19 @@ import { ApifyClient } from 'apify-client';
 
 const ACTOR = 'hiver/company-contact-details';
 const NETWORKS = ['linkedin', 'x', 'facebook', 'instagram', 'youtube', 'github', 'tiktok'];
-const COLUMNS = ['domain', 'companyName', 'status', 'emails', 'emailTypes', 'phones', 'address', 'addressSourceUrl',
-    'contactPageUrl', ...NETWORKS, 'website', 'failureReason', 'input'];
+const COLUMNS = ['domain', 'companyName', 'status', 'reviewFirst', 'emails', 'emailTypes', 'emailFoundVia', 'phones',
+    'phoneFoundVia', 'address', 'addressSourceUrl', 'addressFoundVia', 'contactPageUrl', ...NETWORKS, 'website',
+    'failureReason', 'input'];
+
+// How each value was read (the Actor's foundVia):
+//   structured_data      the site's JSON-LD / schema.org data
+//   link                 a mailto: or tel: link
+//   address_tag          an HTML <address> element
+//   decoded_obfuscation  hidden from bots: Cloudflare email protection or "info [at] example [dot] com"
+//   page_text            plain text on the page
+// reviewFirst = "yes" when any value in the row was read in one of these ways. This is an example rule, not a
+// measured confidence score: edit the set to match how much checking your list needs.
+const REVIEW_IF = new Set(['page_text', 'decoded_obfuscation']);
 
 const { values: opt, positionals } = parseArgs({
     allowPositionals: true,
@@ -51,12 +62,17 @@ if (run.status !== 'SUCCEEDED') throw new Error(`Run did not succeed: ${run.stat
 // One flat CSV row per company. Lists are joined with '; ' in the order the Actor returns them.
 const flatten = (row) => {
     const emails = row.emails ?? [];
+    const phones = row.phones ?? [];
     const socials = row.socials ?? {};
+    const methods = [...emails, ...phones].map((v) => v.foundVia).concat(row.addressFoundVia);
     return {
         ...row,
+        reviewFirst: methods.some((m) => REVIEW_IF.has(m)) ? 'yes' : '',
         emails: emails.map((e) => e.email).join('; '),
         emailTypes: emails.map((e) => e.type ?? '').join('; '),
-        phones: (row.phones ?? []).map((p) => p.e164 ?? p.number ?? '').join('; '),
+        emailFoundVia: emails.map((e) => e.foundVia ?? '').join('; '),
+        phones: phones.map((p) => p.e164 ?? p.number ?? '').join('; '),
+        phoneFoundVia: phones.map((p) => p.foundVia ?? '').join('; '),
         ...Object.fromEntries(NETWORKS.map((n) => [n, socials[n]])),
     };
 };

@@ -44,6 +44,12 @@ Both write `contacts.csv` (or `--out`) with one row per company: `emails`, `emai
 
 No code: open the [Actor page](https://apify.com/hiver/company-contact-details?utm_source=github&utm_campaign=company-contact-details), paste the websites and download CSV, Excel or JSON.
 
+## Which rows to check by hand
+
+Every email, phone and address says how it was read (`foundVia`): `structured_data` (the site's JSON-LD / schema.org data), `link` (a `mailto:` or `tel:` link), `address_tag` (an HTML `<address>` element), `decoded_obfuscation` (an address the site hides from bots) or `page_text` (plain text on the page). The scripts write these as `emailFoundVia`, `phoneFoundVia` (same order as `emails` and `phones`) and `addressFoundVia`, and set `reviewFirst` to `yes` when any value in the row came from `page_text` or `decoded_obfuscation`. That rule is a starting point, not a measured confidence score: edit `REVIEW_IF` at the top of the script to fit your list. The Actor's JSON also gives `pageType` per value (home, contact, imprint, about, support, press, legal or other). Thanks to a dev.to reader for asking for this.
+
+Real example from the board's test run of build 0.2.9 (2026-10-11): for plausible.io, `hello@plausible.io` came from a `mailto:` link on the contact page (`foundVia: link`, `pageType: contact`), and the address `Västriku tn 2, 50403 Tartu` was read from the text of the imprint page (`addressFoundVia: page_text`, `addressPageType: imprint`), so that row gets `reviewFirst: yes`.
+
 ## What it costs
 
 $2 per 1,000 companies on the free plan ($1.70 to $1.90 on paid Apify plans), plus Apify's $0.00005 start fee per run. You pay per company, not per page crawled, so you know the cost before you start. Websites that cannot be reached are listed with a reason and are not charged.

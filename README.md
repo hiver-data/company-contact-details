@@ -68,7 +68,7 @@ Our test bench ran this Actor and three other contact-details Actors from the Ap
 | Average run time per case | 32.0 s | 5.6 s | 45.6 s | 15.7 s |
 | What a Store user paid per 1,000 results in these runs | $1.93 | $3.02 | $2.02 | $1.27 |
 
-Read it fairly: six websites are a small sample, and fields filled is only 3 points ahead. jfaro19/website-contact-finder is much faster and solidscrape/contact-details-scraper costs less per result. The bench covers these three Actors only, not every contact scraper on the Store, and it runs again after every new build. Only this Actor returned the postal address plausible.io publishes on its imprint page.
+Read it fairly: six websites are a small sample, and fields filled is only 3 points ahead. jfaro19/website-contact-finder is much faster and solidscrape/contact-details-scraper costs less per result. The bench covers these three Actors only, not every contact scraper on the Store; later builds have not been benched again yet. Only this Actor returned the postal address plausible.io publishes on its imprint page.
 
 ## What it does not do
 
